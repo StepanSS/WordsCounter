@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+  <html>
+    <head>
+      <!--Import Google Icon Font-->
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+      <!-- Compiled and minified CSS -->
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+      <!--Let browser know website is optimized for mobile-->
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </head>
+
+    <body>
+      <div class="container">
+      <h3 class="center">Select Analysis</h3>
+      
+        <div class="row">
+          <div class="input-field col s12">
+            <i class="material-icons prefix">description</i>
+            <input id="doc_url" type="text" class="validate">
+            <label for="doc_url">Google Doc Url</label>
+          </div>
+          
+          
+          <div class="input-field col s9">
+            <button class="btn waves-effect waves-light" id="btn_sh1" type="submit" name="action">SH1 Doc
+              <i class="material-icons right">send</i>
+            </button>
+          </div>
+          
+          <div class="col s3 center input-field">
+              <div class="preloader-wrapper small" id="preloader_doc_sh1">
+              <div class="spinner-layer spinner-green-only">
+                <div class="circle-clipper left">
+                  <div class="circle"></div>
+                </div><div class="gap-patch">
+                  <div class="circle"></div>
+                </div><div class="circle-clipper right">
+                  <div class="circle"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="input-field col s9">
+            <button class="btn waves-effect waves-light" id="btn_sh2" type="submit" name="action">SH2 Doc
+              <i class="material-icons right">send</i>
+            </button>
+          </div>
+          
+          <div class="col s3 center input-field">
+              <div class="preloader-wrapper small" id="preloader_doc_sh2">
+              <div class="spinner-layer spinner-green-only">
+                <div class="circle-clipper left">
+                  <div class="circle"></div>
+                </div><div class="gap-patch">
+                  <div class="circle"></div>
+                </div><div class="circle-clipper right">
+                  <div class="circle"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        
+       </div><!-- END ROW -->
+       
+          <hr>
+          
+       <div class="row"> 
+          <div class="input-field col s12">
+            <i class="material-icons prefix">public</i>
+            <input id="web_url" type="text" class="validate">
+            <label for="web_url">Web Page Url</label>
+          </div>
+          
+          <div class="input-field col s9">
+            <button class="btn waves-effect waves-light" id="btn2" type="submit" name="action">Analyze Web
+              <i class="material-icons right">send</i>
+            </button>
+          </div>
+          
+          <div class="col s3 center input-field">
+              <div class="preloader-wrapper small" id="preloader_web">
+              <div class="spinner-layer spinner-green-only">
+                <div class="circle-clipper left">
+                  <div class="circle"></div>
+                </div><div class="gap-patch">
+                  <div class="circle"></div>
+                </div><div class="circle-clipper right">
+                  <div class="circle"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+        </div><!-- END ROW -->
+      </div><!--End containeer -->
+
+      <!-- Compiled and minified JavaScript -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+      <script>
+//        hidePreloader("preloader_doc");
+//        hidePreloader("preloader_web");
+//        document.getElementById("preloader_doc_sh1").classList.remove("active");
+//        document.getElementById("preloader_doc_sh2").classList.remove("active");
+//        document.getElementById("preloader_web").classList.remove("active");
+//        console.log(document.getElementById("preloader_doc"));
+        var btnSh1 = document.getElementById("btn_sh1");
+        var btnSh2 = document.getElementById("btn_sh2");
+        var btnWeb = document.getElementById("btn2");
+        var preloaderDocSh1 = document.getElementById("preloader_doc_sh1");
+        var preloaderDocSh2 = document.getElementById("preloader_doc_sh2");
+        var preloaderWeb = document.getElementById("preloader_web");        
+        
+        var docUrlField = document.getElementById("doc_url");
+        var webUrlField = document.getElementById("web_url");
+        
+        // Get urls from Table
+        google.script.run.withSuccessHandler(updateDocUrl).getDocUrl();
+        google.script.run.withSuccessHandler(updateWebUrl).getWebUrl();
+        
+        btnSh1.addEventListener("click", runDocAnalysisSh1);
+        btnSh2.addEventListener("click", runDocAnalysisSh2);
+        btnWeb.addEventListener("click", runWebAnalysisSh1);
+        
+        function updateDocUrl(docUrl){
+           docUrlField.value = docUrl;
+           M.updateTextFields();
+        }
+        function updateWebUrl(webUrls){
+          if(webUrls[0]){
+             webUrlField.value = webUrls[0];
+             M.updateTextFields();
+          }
+           
+        }
+        
+        function runDocAnalysisSh1(){
+           if(docUrlField.value.trim().length==0){
+              google.script.run.errorMsg();
+           }else{
+               var data = { docUrl: docUrlField.value }
+               
+               preloaderDocSh1.classList.add("active");          // show preloader
+               btnSh1.classList.add("disabled");                  // disable btn
+               google.script.run.withSuccessHandler(hideDocPreloaderSh1).analyseDocSh1(data); // run G Script
+           }
+        }
+        function runDocAnalysisSh2(){
+           if(docUrlField.value.trim().length==0){
+              google.script.run.errorMsg();
+           }else{
+               var data = { docUrl: docUrlField.value }
+               
+               preloaderDocSh2.classList.add("active");          // show preloader
+               btnSh2.classList.add("disabled");                  // disable btn
+               google.script.run.withSuccessHandler(hideDocPreloaderSh2).analyseDocSh2(data); // run G Script
+           }
+        }
+        
+        function runWebAnalysisSh1(){
+           if(webUrlField.value.trim().length==0){
+              google.script.run.errorMsg();
+           }else{
+               var data = { webUrl: webUrlField.value }
+               
+               preloaderWeb.classList.add("active");     // show preloader
+               btnWeb.classList.add("disabled");            // disable btn
+               google.script.run.withSuccessHandler(hideWebPreloader).analyseWebSh1(data);
+           }
+        }
+        
+        function hideDocPreloaderSh1(){
+          preloaderDocSh1.classList.remove("active");  // hide preloader
+          btnSh1.classList.remove("disabled");         // activate btn
+        }
+        function hideDocPreloaderSh2(){
+          preloaderDocSh2.classList.remove("active");  // hide preloader
+          btnSh2.classList.remove("disabled");         // activate btn
+        }
+        function hideWebPreloader(){
+          preloaderWeb.classList.remove("active");     // hide preloader
+          btnWeb.classList.remove("disabled");         // activate btn
+        }
+        
+        
+      </script>
+      
+    </body>
+  </html>
+
